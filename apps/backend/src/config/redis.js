@@ -1,10 +1,9 @@
-import IORedis from "ioredis";
 import { Queue } from "bullmq";
+import IORedis from "ioredis";
 
-export const connection = new IORedis({
- host: process.env.REDIS_HOST,
- port: 6379
+const connection = new IORedis({
+  host: "redis"
 });
 
 export const integrationQueue =
- new Queue("integrationQueue", { connection });
+  new Queue("integrations", { connection });

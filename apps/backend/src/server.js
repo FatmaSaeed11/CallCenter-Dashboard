@@ -1,22 +1,34 @@
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
-import rateLimit from "express-rate-limit";
-import {connectDB} from "./config/db.js";
+import morgan from "morgan";
+
+import "./config/env.js";
+import { connectDB } from "./config/db.js";
+
+import authRoutes from "./modules/auth/auth.routes.js";
+import orderRoutes from "./modules/orders/order.routes.js";
+import userRoutes from "./modules/users/user.routes.js";
+
+import { errorHandler } from "./middleware/error.middleware.js";
+import customerRoutes from "./modules/customers/customer.routes.js";
 
 const app = express();
 
 connectDB();
 
-app.use(express.json());
 app.use(cors());
 app.use(helmet());
+app.use(morgan("dev"));
+app.use(express.json());
 
-app.use(rateLimit({
- windowMs:15*60*1000,
- max:100
-}));
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/orders", orderRoutes);
 
-app.get("/",(_,res)=>res.send("API Running"));
+app.use(errorHandler);
+app.use("/api/customers", customerRoutes);
 
-app.listen(5000,()=>console.log("Server running"));
+app.listen(5000, () =>
+  console.log("🚀 Server running on port 5000")
+);
