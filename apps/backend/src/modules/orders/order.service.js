@@ -1,20 +1,138 @@
-import Order from "./order.model.js";
+const mongoose = require("mongoose");
 
-export const createOrder = async (data, agentId) => {
+const Order = require("./order.model");
+const CustomerService = require("../customers/customers.service");
+const { createCommission } = require("../commissions/commission.service");
+const integrationWorker = require("../../workers/integration.worker");
 
-  const totalAmount =
-    data.items.reduce((s, i) => s + i.price * i.quantity, 0);
+const { ROLES } = require("../../common/constants/roles");
 
-  const totalCommission =
-    data.items.reduce((s, i) => s + i.commission * i.quantity, 0);
+// ✅ ADD THIS (VERY IMPORTANT)
+const { findBySku } = require("../products/product.service");
 
-  return Order.create({
-    ...data,
-    agent: agentId,
-    totalAmount,
-    totalCommission
-  });
+
+// =======================================
+// CREATE ORDER — ENTERPRISE SAFE
+// =======================================
+
+exports.createOrder = async (payload, agentId) => {
+
+    const session = await mongoose.startSession();
+
+    try {
+
+        session.startTransaction();
+
+        const { sku, quantity, customer } = payload;
+
+        // ✅ Strong validation
+        if (!sku || !quantity || quantity <= 0) {
+            throw new Error("Valid SKU and quantity required");
+        }
+
+        // ✅ CLEAN ARCHITECTURE — use product service
+        const product = await findBySku(sku, session);
+
+
+        // ✅ Ensure customer INSIDE transaction
+        const syncedCustomer =
+            await CustomerService.ensureCustomer(customer, session);
+
+        const totalAmount = product.price * quantity;
+
+        // ✅ Create order
+        const [order] = await Order.create([{
+            agent: agentId,
+            customer: syncedCustomer._id,
+            items: [{
+                product: product._id,
+                sku: product.sku, // always trust DB value
+                quantity,
+                price: product.price
+            }],
+            totalAmount,
+            status: "pending",
+            syncStatus: "pending"
+        }], { session });
+
+
+        // ✅ Commission INSIDE transaction
+        await createCommission({
+            employeeId: agentId,
+            orderId: order._id,
+            items: order.items,
+            vendor: product.vendor || "default"
+        }, session);
+
+
+        // ✅ Commit FIRST
+        await session.commitTransaction();
+
+        // 🔥 NEVER run integrations inside transaction
+        await integrationWorker.addIntegrationJob(order);
+
+        return order;
+
+    } catch (err) {
+
+        await session.abortTransaction();
+        throw err;
+
+    } finally {
+
+        session.endSession();
+    }
 };
 
-export const getOrders = (query) =>
-  Order.find(query).populate("agent", "name");
+
+
+// =======================================
+// GET ORDERS
+// =======================================
+
+exports.getOrders = async (user, agentFilter) => {
+
+    let filter = {};
+
+    // Employee sees ONLY their orders
+    if (user.role === ROLES.EMPLOYEE) {
+        filter.agent = user._id;
+    }
+
+    // Admin filtering
+    if (agentFilter && user.role === ROLES.ADMIN) {
+        filter.agent = agentFilter;
+    }
+
+    return Order.find(filter)
+        .populate("agent", "name")
+        .populate("customer", "name phone")
+        .sort({ createdAt: -1 })
+        .lean(); // 🔥 big performance boost
+};
+
+
+
+// =======================================
+// ENTERPRISE DASHBOARD
+// =======================================
+
+exports.getDashboardStats = async () => {
+
+    const stats = await Order.aggregate([
+        {
+            $group: {
+                _id: null,
+                revenue: { $sum: "$totalAmount" },
+                totalOrders: { $sum: 1 },
+                avgOrderValue: { $avg: "$totalAmount" }
+            }
+        }
+    ]);
+
+    return stats[0] || {
+        revenue: 0,
+        totalOrders: 0,
+        avgOrderValue: 0
+    };
+};

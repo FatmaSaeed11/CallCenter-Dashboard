@@ -1,67 +1,55 @@
+import asyncHandler from "../../common/helpers/asyncHandler.js";
+import { ApiError } from "../../common/errors/ApiError.js";
 import * as customerService from "./customer.service.js";
+
+
 
 /**
  * POST /customers
+ * Admin only usually
  */
-export const createCustomer = async (req, res) => {
-  try {
-    const customer = await customerService.createCustomer(req.body);
+export const createCustomer = asyncHandler(async (req, res) => {
 
-    res.status(201).json({
-      success: true,
-      data: customer
-    });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: err.message
-    });
-  }
-};
+  const customer = await customerService.createCustomer(req.body);
+
+  res.status(201).json({
+    success: true,
+    data: customer
+  });
+});
+
+
 
 /**
  * GET /customers
  */
-export const getCustomers = async (req, res) => {
-  try {
-    const customers = await customerService.getCustomers();
+export const getCustomers = asyncHandler(async (req, res) => {
 
-    res.json({
-      success: true,
-      data: customers
-    });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: err.message
-    });
-  }
-};
+  const customers = await customerService.getCustomers();
+
+  res.json({
+    success: true,
+    data: customers
+  });
+});
+
+
 
 /**
  * GET /customers/:phone
+ * Used heavily by agents during order creation
  */
-export const getCustomerByPhone = async (req, res) => {
-  try {
-    const customer = await customerService.findCustomerByPhone(
-      req.params.phone
-    );
+export const getCustomerByPhone = asyncHandler(async (req, res) => {
 
-    if (!customer) {
-      return res.status(404).json({
-        success: false,
-        message: "Customer not found"
-      });
-    }
+  const customer =
+    await customerService.findCustomerByPhone(req.params.phone);
 
-    res.json({
-      success: true,
-      data: customer
-    });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: err.message
-    });
+  if (!customer) {
+    throw new ApiError(404, "Customer not found");
   }
-};
+
+  res.json({
+    success: true,
+    data: customer
+  });
+});

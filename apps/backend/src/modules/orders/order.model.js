@@ -1,33 +1,62 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
-const itemSchema = new mongoose.Schema({
-  sku: String,
-  name: String,
-  price: Number,
-  quantity: Number,
-  commission: Number
+const orderItemSchema = new mongoose.Schema({
+    product: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+        required: true
+    },
+    sku: String,
+    quantity: Number,
+    price: Number
 });
 
 const orderSchema = new mongoose.Schema({
-  agent: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    index: true
-  },
 
-  customerName: String,
-  phone: String,
+    agent: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+        index: true
+    },
 
-  items: [itemSchema],
+    customer: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Customer",
+        required: true,
+        index: true
+    },
 
-  totalAmount: Number,
-  totalCommission: Number,
+    items: {
+        type: [orderItemSchema],
+        required: true
+    },
 
-  status: {
-    type: String,
-    default: "completed"
-  }
-},
-{ timestamps: true });
+    totalAmount: {
+        type: Number,
+        required: true,
+        index: true
+    },
 
-export default mongoose.model("Order", orderSchema);
+    status: {
+        type: String,
+        enum: ["pending", "completed", "cancelled"],
+        default: "completed",
+        index: true
+    },
+
+    syncStatus: {
+        type: String,
+        enum: ["pending", "synced", "failed"],
+        default: "pending",
+        index: true
+    }
+
+}, { timestamps: true });
+
+
+// 🔥 ENTERPRISE INDEXES (VERY IMPORTANT)
+orderSchema.index({ agent: 1, createdAt: -1 });
+orderSchema.index({ status: 1, createdAt: -1 });
+
+module.exports = mongoose.model("Order", orderSchema);
