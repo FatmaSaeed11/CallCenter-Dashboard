@@ -1,22 +1,32 @@
-import * as service from "./order.service.js";
+const orderService = require("./order.service");
 
-export const create = async (req, res) => {
-  const order = await service.createOrder(
-    req.body,
-    req.user._id
-  );
+exports.createOrder = async (req, res) => {
 
-  res.json(order);
+    const order = await orderService.createOrder(
+        req.body,
+        req.user.id
+    );
+
+    res.status(201).json(order);
 };
 
-export const list = async (req, res) => {
 
-  const filter =
-    req.user.role === "admin"
-      ? {}
-      : { agent: req.user._id };
 
-  const orders = await service.getOrders(filter);
+exports.getOrders = async (req, res) => {
 
-  res.json(orders);
+    const orders = await orderService.getOrders(
+        req.user,
+        req.query.agent
+    );
+
+    res.json(orders);
+};
+
+
+
+exports.dashboard = async (req, res) => {
+
+    const stats = await orderService.getDashboardStats();
+
+    res.json(stats);
 };

@@ -1,11 +1,72 @@
-import * as service from "./user.service.js";
+const userService = require("./user.service");
 
-export const create = async (req, res) => {
-  const user = await service.createUser(req.body);
-  res.json(user);
+
+// CREATE
+exports.createUser = async (req, res) => {
+
+    try{
+
+        const user = await userService.createUser(req.body);
+
+        res.status(201).json({
+            success:true,
+            data:user
+        });
+
+    }catch(err){
+
+        res.status(400).json({
+            success:false,
+            message:err.message
+        });
+    }
 };
 
-export const agents = async (req, res) => {
-  const users = await service.getAgents();
-  res.json(users);
+
+
+// GET ALL
+exports.getUsers = async (req,res)=>{
+
+    try{
+
+        const users = await userService.getUsers();
+
+        res.json({
+            success:true,
+            data:users
+        });
+
+    }catch(err){
+
+        res.status(500).json({
+            success:false,
+            message:err.message
+        });
+    }
+};
+
+
+
+// GET EMPLOYEES
+exports.getEmployees = async (req,res)=>{
+
+    const employees = await userService.getEmployees();
+
+    res.json({
+        success:true,
+        data:employees
+    });
+};
+
+
+
+// DEACTIVATE
+exports.deactivateUser = async (req,res)=>{
+
+    const user = await userService.deactivateUser(req.params.id);
+
+    res.json({
+        success:true,
+        data:user
+    });
 };

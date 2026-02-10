@@ -1,14 +1,67 @@
-import User from "./user.model.js";
-import bcrypt from "bcrypt";
+const User = require("./user.model");
 
-export const createUser = async (data) => {
-  const hash = await bcrypt.hash(data.password, 10);
 
-  return User.create({
-    ...data,
-    password: hash
-  });
+// ===============================
+// CREATE USER (Admin only)
+// ===============================
+
+exports.createUser = async (data) => {
+
+    const existing = await User.findOne({
+        email: data.email.toLowerCase()
+    });
+
+    if(existing){
+        throw new Error("User already exists");
+    }
+
+    return User.create({
+        ...data,
+        email: data.email.toLowerCase()
+    });
 };
 
-export const getAgents = () =>
-  User.find({ role: "agent" }).select("-password");
+
+
+// ===============================
+// GET USERS
+// ===============================
+
+exports.getUsers = async () => {
+
+    return User.find({ isActive: true })
+        .select("-password")
+        .lean()
+        .sort({ createdAt: -1 });
+};
+
+
+
+// ===============================
+// GET EMPLOYEES ONLY
+// ===============================
+
+exports.getEmployees = async () => {
+
+    return User.find({
+        role: "EMPLOYEE",
+        isActive: true
+    })
+    .select("-password")
+    .lean();
+};
+
+
+
+// ===============================
+// DEACTIVATE USER (Never hard delete)
+// ===============================
+
+exports.deactivateUser = async (id) => {
+
+    return User.findByIdAndUpdate(
+        id,
+        { isActive: false },
+        { new: true }
+    );
+};
