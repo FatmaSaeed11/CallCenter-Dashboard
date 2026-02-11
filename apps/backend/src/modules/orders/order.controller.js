@@ -1,6 +1,6 @@
-const orderService = require("./order.service");
+import * as orderService from "./order.service.js";
 
-exports.createOrder = async (req, res) => {
+export const createOrder = async (req, res) => {
 
     const order = await orderService.createOrder(
         req.body,
@@ -12,7 +12,7 @@ exports.createOrder = async (req, res) => {
 
 
 
-exports.getOrders = async (req, res) => {
+export const getOrders = async (req, res) => {
 
     const orders = await orderService.getOrders(
         req.user,
@@ -24,7 +24,7 @@ exports.getOrders = async (req, res) => {
 
 
 
-exports.dashboard = async (req, res) => {
+export const dashboard = async (req, res) => {
 
     const stats = await orderService.getDashboardStats();
 

@@ -1,8 +1,8 @@
-const userService = require("./user.service");
+import * as userService from "./user.service.js";
 
 
 // CREATE
-exports.createUser = async (req, res) => {
+export const createUser = async (req, res) => {
 
     try{
 
@@ -25,7 +25,7 @@ exports.createUser = async (req, res) => {
 
 
 // GET ALL
-exports.getUsers = async (req,res)=>{
+export const getUsers = async (req,res)=>{
 
     try{
 
@@ -48,7 +48,7 @@ exports.getUsers = async (req,res)=>{
 
 
 // GET EMPLOYEES
-exports.getEmployees = async (req,res)=>{
+export const getEmployees = async (req,res)=>{
 
     const employees = await userService.getEmployees();
 
@@ -61,7 +61,7 @@ exports.getEmployees = async (req,res)=>{
 
 
 // DEACTIVATE
-exports.deactivateUser = async (req,res)=>{
+export const deactivateUser = async (req,res)=>{
 
     const user = await userService.deactivateUser(req.params.id);
 

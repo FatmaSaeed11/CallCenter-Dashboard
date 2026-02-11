@@ -1,21 +1,17 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
+import Order from "./order.model.js";
+import * as CustomerService from "../customers/customer.service.js";
+import { createCommission } from "../commissions/commission.service.js";
+import { ROLES } from "../../common/constants/roles.js";
+import { findBySku } from "../products/product.service.js";
 
-const Order = require("./order.model");
-const CustomerService = require("../customers/customers.service");
-const { createCommission } = require("../commissions/commission.service");
-const integrationWorker = require("../../workers/integration.worker");
-
-const { ROLES } = require("../../common/constants/roles");
-
-// ✅ ADD THIS (VERY IMPORTANT)
-const { findBySku } = require("../products/product.service");
 
 
 // =======================================
 // CREATE ORDER — ENTERPRISE SAFE
 // =======================================
 
-exports.createOrder = async (payload, agentId) => {
+export const createOrder = async (payload, agentId) => {
 
     const session = await mongoose.startSession();
 
@@ -90,7 +86,7 @@ exports.createOrder = async (payload, agentId) => {
 // GET ORDERS
 // =======================================
 
-exports.getOrders = async (user, agentFilter) => {
+export const getOrders = async (user, agentFilter) => {
 
     let filter = {};
 
@@ -117,7 +113,7 @@ exports.getOrders = async (user, agentFilter) => {
 // ENTERPRISE DASHBOARD
 // =======================================
 
-exports.getDashboardStats = async () => {
+export const getDashboardStats = async () => {
 
     const stats = await Order.aggregate([
         {

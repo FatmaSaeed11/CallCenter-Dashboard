@@ -1,11 +1,11 @@
-const User = require("./user.model");
+import User from "./user.model.js";
 
 
 // ===============================
 // CREATE USER (Admin only)
 // ===============================
 
-exports.createUser = async (data) => {
+export const createUser = async (data) => {
 
     const existing = await User.findOne({
         email: data.email.toLowerCase()
@@ -27,7 +27,7 @@ exports.createUser = async (data) => {
 // GET USERS
 // ===============================
 
-exports.getUsers = async () => {
+export const getUsers = async () => {
 
     return User.find({ isActive: true })
         .select("-password")
@@ -41,7 +41,7 @@ exports.getUsers = async () => {
 // GET EMPLOYEES ONLY
 // ===============================
 
-exports.getEmployees = async () => {
+export const getEmployees = async () => {
 
     return User.find({
         role: "EMPLOYEE",
@@ -57,7 +57,7 @@ exports.getEmployees = async () => {
 // DEACTIVATE USER (Never hard delete)
 // ===============================
 
-exports.deactivateUser = async (id) => {
+export const deactivateUser = async (id) => {
 
     return User.findByIdAndUpdate(
         id,

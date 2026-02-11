@@ -1,6 +1,6 @@
-import "./config/env.js";
-import "./workers/integration.worker.js"; // ⭐ START WORKER
-
+import dotenv from "dotenv";
+dotenv.config();
+console.log("JWT_ACCESS_SECRET =", process.env.JWT_ACCESS_SECRET);
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -14,9 +14,11 @@ import orderRoutes from "./modules/orders/order.routes.js";
 import userRoutes from "./modules/users/user.routes.js";
 import customerRoutes from "./modules/customers/customer.routes.js";
 import commissionRoutes from "./modules/commissions/commission.routes.js";
+import productRoutes from "./modules/products/product.routes.js";
 
 // Middleware
 import { errorHandler } from "./middleware/error.middleware.js";
+console.log("✅ CORRECT SERVER FILE IS RUNNING");
 
 const app = express();
 
@@ -29,7 +31,7 @@ app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 app.use(express.json({ limit: "10kb" }));
 
 /* HEALTH CHECK */
-app.get("/health", (req, res) => {
+app.get("/", (req, res) => {
   res.status(200).json({ status: "OK" });
 });
 
@@ -39,6 +41,8 @@ app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/commissions", commissionRoutes);
+app.use("/api/products", productRoutes);
+
 
 /* 404 */
 app.use((req, res) => {
@@ -50,6 +54,7 @@ app.use((req, res) => {
 
 /* ERROR */
 app.use(errorHandler);
+
 
 const PORT = process.env.PORT || 5000;
 
