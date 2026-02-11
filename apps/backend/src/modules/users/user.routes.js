@@ -1,9 +1,9 @@
-const router = require("express").Router();
+import express from "express";
+import * as controller from "./user.controller.js";
+import { protect } from "../../middleware/auth.middleware.js";
+import { authorize } from "../../middleware/role.middleware.js";
 
-const controller = require("./user.controller");
-
-const protect = require("../../middleware/auth.middleware");
-const authorize = require("../../middleware/role.middleware");
+const router = express.Router();
 
 
 // 🔥 EVERYTHING below requires login
@@ -25,5 +25,5 @@ router.patch("/:id",
     controller.deactivateUser
 );
 
-module.exports = router;
+export default router;
 

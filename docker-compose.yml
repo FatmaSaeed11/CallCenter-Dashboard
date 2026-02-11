@@ -10,34 +10,41 @@ services:
       - frontend
       - backend
 
-  frontend:
-    build: ./apps/frontend
-    ports:
-      - "5173:5173"
 
   backend:
     build: ./apps/backend
     ports:
       - "5000:5000"
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/callcenter
-      - REDIS_HOST=redis
+    env_file:
+      - ./apps/backend/.env
     depends_on:
       - mongo
       - redis
+    restart: always
 
   worker:
     build: ./apps/backend
-    command: node src/workers/integration.worker.js
+    command: npm run worker
+    env_file:
+      - ./apps/backend/.env
     depends_on:
+      - mongo
       - redis
+    restart: always
 
   mongo:
-    image: mongo
+    image: mongo:latest
     ports:
       - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    restart: always
 
   redis:
-    image: redis
+    image: redis:latest
     ports:
       - "6379:6379"
+    restart: always
+
+volumes:
+  mongo_data:

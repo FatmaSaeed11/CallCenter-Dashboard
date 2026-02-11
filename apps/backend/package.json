@@ -4,9 +4,10 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "dev": "nodemon src/server.js",
-    "start": "node src/server.js",
-    "worker": "node workers/integration.worker.js"
+  "dev": "nodemon src/server.js",
+  "start": "node src/server.js",
+  "worker": "node src/workers/integration.worker.js",
+  "dev:all": "concurrently \"nodemon src/server.js\" \"nodemon src/workers/integration.worker.js\""
   },
   "keywords": [],
   "author": "",

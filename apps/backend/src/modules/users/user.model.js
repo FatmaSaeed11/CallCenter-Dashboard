@@ -1,5 +1,6 @@
-const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
+import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
+console.log("🔥 USER MODEL LOADED FROM:", import.meta.url);
 
 const userSchema = new mongoose.Schema({
 
@@ -21,7 +22,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         minlength: 6,
-        select: false // 🔥 never return passwords
+        select: false
     },
 
     role: {
@@ -40,22 +41,19 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 
-// 🔥 AUTO HASH PASSWORD
-userSchema.pre("save", async function(next){
+// ✅ Auto hash password
+userSchema.pre("save", async function () {
 
-    if(!this.isModified("password")) return next();
+    if (!this.isModified("password")) return;
 
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-
-    next();
+    this.password = await bcrypt.hash(this.password, 10);
 });
 
 
-// 🔥 PASSWORD CHECK
-userSchema.methods.comparePassword = function(password){
-    return bcrypt.compare(password, this.password);
+// ✅ Compare password
+userSchema.methods.comparePassword = async function (password) {
+    return await bcrypt.compare(password, this.password);
 };
 
 
-module.exports = mongoose.model("User", userSchema);
+export default mongoose.model("User", userSchema);

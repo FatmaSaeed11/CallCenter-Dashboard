@@ -1,4 +1,4 @@
-import asyncHandler from "../common/helpers/asyncHandler.js";
+import asyncHandler from "../../common/helpers/ah.js";
 import { ApiError } from "../common/errors/ApiError.js";
 import { verifyAccessToken } from "../modules/auth/token.service.js";
 import User from "../modules/users/user.model.js";
