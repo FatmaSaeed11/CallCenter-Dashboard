@@ -1,4 +1,4 @@
-import asyncHandler from "../../common/helpers/ah.js";
+import asyncHandler from "../../common/helpers/asyncHandler.js";
 import { ApiError } from "../../common/errors/ApiError.js";
 import * as customerService from "./customer.service.js";
 
