@@ -50,6 +50,12 @@ const orderSchema = new mongoose.Schema({
         enum: ["pending", "synced", "failed"],
         default: "pending",
         index: true
+    },
+     externalIds: {
+        shopify: {
+            type: String,
+            index: true
+        }
     }
 
 }, { timestamps: true });

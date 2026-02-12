@@ -1,4 +1,4 @@
-import asyncHandler from "../../common/helpers/ah.js";
+import asyncHandler from "../../common/helpers/asyncHandler.js";
 import * as authService from "./auth.service.js";
 
 export const register = asyncHandler(async (req, res) => {

@@ -9,6 +9,7 @@ import morgan from "morgan";
 import { connectDB } from "./config/db.js";
 
 // Routes
+import shopifyRoutes from "./integrations/shopify/shopify.routes.js";
 import authRoutes from "./modules/auth/auth.routes.js";
 import orderRoutes from "./modules/orders/order.routes.js";
 import userRoutes from "./modules/users/user.routes.js";
@@ -29,6 +30,9 @@ app.use(cors());
 app.use(helmet());
 app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 app.use(express.json({ limit: "10kb" }));
+app.use("/webhooks/shopify", express.raw({ type: "application/json" }));
+app.use("/webhooks/shopify", shopifyRoutes);
+app.use(express.json());
 
 /* HEALTH CHECK */
 app.get("/", (req, res) => {
