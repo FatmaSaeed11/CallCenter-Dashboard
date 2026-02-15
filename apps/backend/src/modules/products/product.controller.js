@@ -1,5 +1,5 @@
-import * as productService from "./product.service.js";
-import { createProductSchema } from "./product.validation.js";
+import {createProduct,getProducts,updateProduct,deactivateProduct} from "./product.service.js";
+import { createProductSchema } from "./product.validatior.js";
 
 
 // CREATE
@@ -17,7 +17,7 @@ export const createProduct = async (req, res) => {
     }
 
     const product =
-      await productService.createProduct(value);
+      await createProduct(value);
 
     res.status(201).json({
       success: true,
@@ -40,7 +40,7 @@ export const getProducts = async (req, res) => {
   try {
 
     const products =
-      await productService.getProducts();
+      await getProducts();
 
     res.json({
       success: true,
@@ -63,7 +63,7 @@ export const updateProduct = async (req, res) => {
   try {
 
     const product =
-      await productService.updateProduct(
+      await updateProduct(
         req.params.id,
         req.body
       );
@@ -89,7 +89,7 @@ export const deactivateProduct = async (req, res) => {
   try {
 
     const product =
-      await productService.deactivateProduct(
+      await deactivateProduct(
         req.params.id
       );
 

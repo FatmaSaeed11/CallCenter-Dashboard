@@ -9,13 +9,13 @@ import morgan from "morgan";
 import { connectDB } from "./config/db.js";
 
 // Routes
-import shopifyRoutes from "./integrations/shopify/shopify.routes.js";
-import authRoutes from "./modules/auth/auth.routes.js";
-import orderRoutes from "./modules/orders/order.routes.js";
-import userRoutes from "./modules/users/user.routes.js";
-import customerRoutes from "./modules/customers/customer.routes.js";
-import commissionRoutes from "./modules/commissions/commission.routes.js";
-import productRoutes from "./modules/products/product.routes.js";
+import {shopifyRouter} from "./integrations/shopify/shopify.router.js";
+import {authRouter} from "./modules/auth/auth.router.js";
+import {orderRouter} from "./modules/orders/order.router.js";
+import {userRouter} from "./modules/users/user.router.js";
+import {customerRouter} from "./modules/customers/customer.router.js";
+import {commissionRouter} from "./modules/commissions/commission.router.js";
+import {productRouter} from "./modules/products/product.router.js";
 
 // Middleware
 import { errorHandler } from "./middleware/error.middleware.js";
@@ -40,12 +40,12 @@ app.get("/", (req, res) => {
 });
 
 /* ROUTES */
-app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/orders", orderRoutes);
-app.use("/api/customers", customerRoutes);
-app.use("/api/commissions", commissionRoutes);
-app.use("/api/products", productRoutes);
+app.use("/api/auth", authRouter);
+app.use("/api/users", userRouter);
+app.use("/api/orders", orderRouter);
+app.use("/api/customers", customerRouter);
+app.use("/api/commissions", commissionRouter);
+app.use("/api/products", productRouter);
 
 
 /* 404 */

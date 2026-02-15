@@ -1,72 +1,43 @@
-import * as userService from "./user.service.js";
-
+import asyncHandler from "../../common/helpers/asyncHandler.js";
+import {
+  createUser as createUserService,
+  getUsers as getUsersService,
+  getEmployees as getEmployeesService,
+  deactivateUser as deactivateUserService
+} from "./user.service.js";
 
 // CREATE
-export const createUser = async (req, res) => {
-
-    try{
-
-        const user = await userService.createUser(req.body);
-
+export const createUser = asyncHandler(async (req, res) => {
+        const user = await createUserService(req.body);
         res.status(201).json({
-            success:true,
-            data:user
+            success: true,
+            data: user
         });
-
-    }catch(err){
-
-        res.status(400).json({
-            success:false,
-            message:err.message
-        });
-    }
-};
-
-
+});
 
 // GET ALL
-export const getUsers = async (req,res)=>{
-
-    try{
-
-        const users = await userService.getUsers();
-
+export const getUsers = asyncHandler(async (req, res) => {
+        const users = await getUsersService();
         res.json({
-            success:true,
-            data:users
+            success: true,
+            data: users
         });
-
-    }catch(err){
-
-        res.status(500).json({
-            success:false,
-            message:err.message
-        });
-    }
-};
-
-
+});
 
 // GET EMPLOYEES
-export const getEmployees = async (req,res)=>{
-
-    const employees = await userService.getEmployees();
-
-    res.json({
-        success:true,
-        data:employees
-    });
-};
-
-
+export const getEmployees = asyncHandler(async (req, res) => {
+        const employees = await getEmployeesService();
+        res.json({
+            success: true,
+            data: employees
+        });
+});
 
 // DEACTIVATE
-export const deactivateUser = async (req,res)=>{
-
-    const user = await userService.deactivateUser(req.params.id);
-
+export const deactivateUser = asyncHandler(async (req, res) => {
+    const user = await deactivateUserService(req.params.id);
     res.json({
-        success:true,
-        data:user
+        success: true,
+        data: user
     });
-};
+});

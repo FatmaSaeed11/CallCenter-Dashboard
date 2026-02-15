@@ -48,7 +48,7 @@ const productSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 
-// 🔥 Compound index for fast dashboards
+// Compound index for fast dashboards
 productSchema.index({
   vendor: 1,
   isActive: 1

@@ -1,9 +1,7 @@
 import asyncHandler from "../../common/helpers/asyncHandler.js";
 import Commission from "./commission.model.js";
 
-/*
-   Employee → see THEIR commissions
-*/
+  // Employee → see THEIR commissions
 export const myCommissions = asyncHandler(async (req, res) => {
 
   const commissions = await Commission.find({
@@ -15,9 +13,7 @@ export const myCommissions = asyncHandler(async (req, res) => {
   res.json(commissions);
 });
 
-/*
-   Admin → see ALL commissions
-*/
+ //  Admin → see ALL commissions
 export const allCommissions = asyncHandler(async (req, res) => {
 
   const commissions = await Commission.find()
@@ -28,9 +24,8 @@ export const allCommissions = asyncHandler(async (req, res) => {
   res.json(commissions);
 });
 
-/*
-   Dashboard Summary
-*/
+  // Dashboard Summary
+
 export const commissionSummary = asyncHandler(async (req, res) => {
 
   const total = await Commission.aggregate([

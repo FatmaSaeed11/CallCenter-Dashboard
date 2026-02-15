@@ -61,7 +61,7 @@ const orderSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 
-// 🔥 ENTERPRISE INDEXES (VERY IMPORTANT)
+// ENTERPRISE INDEXES (VERY IMPORTANT)
 orderSchema.index({ agent: 1, createdAt: -1 });
 orderSchema.index({ status: 1, createdAt: -1 });
 

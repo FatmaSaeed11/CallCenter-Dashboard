@@ -1,8 +1,8 @@
 import Commission from "./commission.model.js";
 
-/**
- * ENTERPRISE — Transaction Safe Commission Creation
- * MUST be called inside a Mongo session
+/*
+ ENTERPRISE — Transaction Safe Commission Creation
+ MUST be called inside a Mongo session
  */
 export const createCommission = async (data, session) => {
 
@@ -19,10 +19,9 @@ export const createCommission = async (data, session) => {
     vendor
   } = data;
 
-  /**
-   * 🔥 Prevent duplicate commission
-   * VERY IMPORTANT in financial systems
-   */
+  
+   // Prevent duplicate commission
+  
   const existing = await Commission.findOne({
     order: orderId
   }).session(session);

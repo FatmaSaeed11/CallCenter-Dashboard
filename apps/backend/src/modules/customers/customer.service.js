@@ -3,9 +3,8 @@ import { createOdooCustomer } from "../../integrations/odoo/odoo.service.js";
 import { normalizePhone } from "../../common/utils/normalizePhone.js";
 
 
-/**
- * Find customer by phone
- */
+//Find customer by phone
+
 export const findCustomerByPhone = async (phone) => {
 
   const normalizedPhone = normalizePhone(phone);
@@ -17,10 +16,9 @@ export const findCustomerByPhone = async (phone) => {
 
 
 
-
-/**
- * ENTERPRISE — Transaction Safe
- * Used inside ORDER transactions
+/*
+  ENTERPRISE — Transaction Safe
+  Used inside ORDER transactions
  */
 export const ensureCustomer = async (data, session) => {
 
@@ -28,7 +26,7 @@ export const ensureCustomer = async (data, session) => {
     throw new Error("Customer phone is required");
   }
 
-  // ✅ Normalize FIRST
+  // Normalize FIRST
   data.phone = normalizePhone(data.phone);
 
   let customer = await Customer.findOne({
@@ -48,8 +46,8 @@ export const ensureCustomer = async (data, session) => {
     console.error("Odoo customer creation failed:", err.message);
 
     /**
-     * Enterprise behavior:
-     * NEVER fail financial transaction because of ERP downtime
+      Enterprise behavior:
+      NEVER fail financial transaction because of ERP downtime
      */
   }
 
@@ -64,16 +62,15 @@ export const ensureCustomer = async (data, session) => {
 
 
 
-/**
- * Standalone creation (Admin / imports)
- */
+//Standalone creation (Admin / imports)
+ 
 export const createCustomer = async (data) => {
 
   if (!data.phone) {
     throw new Error("Customer phone is required");
   }
 
-  // ✅ Normalize BEFORE lookup
+  // Normalize BEFORE lookup
   data.phone = normalizePhone(data.phone);
 
   const existing = await Customer.findOne({
@@ -102,10 +99,7 @@ export const createCustomer = async (data) => {
 
 
 
-
-/**
- * Get all customers
- */
+ // Get all customers
 export const getCustomers = async () => {
   return Customer.find()
     .sort({ createdAt: -1 })

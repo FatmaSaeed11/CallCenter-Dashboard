@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
-console.log("🔥 USER MODEL LOADED FROM:", import.meta.url);
+console.log(" USER MODEL LOADED FROM:", import.meta.url);
 
 const userSchema = new mongoose.Schema({
 
@@ -41,7 +41,7 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 
-// ✅ Auto hash password
+// Auto hash password
 userSchema.pre("save", async function () {
 
     if (!this.isModified("password")) return;
@@ -50,7 +50,7 @@ userSchema.pre("save", async function () {
 });
 
 
-// ✅ Compare password
+// Compare password
 userSchema.methods.comparePassword = async function (password) {
     return await bcrypt.compare(password, this.password);
 };

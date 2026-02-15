@@ -1,12 +1,11 @@
 import express from "express";
 import { protect } from "../../middleware/auth.middleware.js";
 import { authorize } from "../../middleware/role.middleware.js";
-import * as controller from "./order.controller.js";
+import { createOrder, getOrders, dashboard } from "./order.controller.js";
 
-import { ROLES } from "../../common/constants/roles.js"; // ✅ HERE
+import { ROLES } from "../../common/constants/roles.js"; 
 
-
-const router = express.Router();
+export const router = express.Router();
 
 router.use(protect);
 
@@ -14,20 +13,18 @@ router.use(protect);
 router.post(
   "/",
   authorize(ROLES.ADMIN, ROLES.EMPLOYEE),
-  controller.createOrder
+  createOrder
 );
 
 // Admin only
 router.get(
   "/",
   authorize(ROLES.ADMIN),
-  controller.getOrders
+  getOrders
 );
 
 router.get(
   "/dashboard",
   authorize(ROLES.ADMIN),
-  controller.dashboard
+  dashboard
 );
-
-export default router;

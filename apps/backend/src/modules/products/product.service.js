@@ -1,10 +1,6 @@
 import Product from "./product.model.js";
 
-
-// =======================================
 // CREATE PRODUCT
-// =======================================
-
 export const createProduct = async (data) => {
 
   if (!data.sku) {
@@ -28,26 +24,21 @@ export const createProduct = async (data) => {
 };
 
 
-
-// =======================================
 // GET ACTIVE PRODUCTS (FAST)
-// =======================================
-
 export const getProducts = async () => {
 
   return Product.find({
     isActive: true
   })
-    .lean() // 🔥 huge performance gain
+    .lean() // huge performance
     .sort({ createdAt: -1 });
 };
 
 
 
-// =======================================
-// 🔥 ENTERPRISE — TRANSACTION SAFE LOOKUP
+
+// ENTERPRISE — TRANSACTION SAFE LOOKUP
 // Used by ORDER SERVICE
-// =======================================
 
 export const findBySku = async (sku, session = null) => {
 
@@ -77,11 +68,7 @@ export const findBySku = async (sku, session = null) => {
 };
 
 
-
-// =======================================
 // UPDATE PRODUCT
-// =======================================
-
 export const updateProduct = async (id, data) => {
 
   // Prevent accidental SKU casing issues
@@ -104,9 +91,7 @@ export const updateProduct = async (id, data) => {
 
 
 
-// =======================================
 // SOFT DELETE (Never hard delete revenue)
-// =======================================
 
 export const deactivateProduct = async (id) => {
 

@@ -1,9 +1,7 @@
 import User from "./user.model.js";
 
 
-// ===============================
 // CREATE USER (Admin only)
-// ===============================
 
 export const createUser = async (data) => {
 
@@ -22,11 +20,7 @@ export const createUser = async (data) => {
 };
 
 
-
-// ===============================
 // GET USERS
-// ===============================
-
 export const getUsers = async () => {
 
     return User.find({ isActive: true })
@@ -37,10 +31,7 @@ export const getUsers = async () => {
 
 
 
-// ===============================
 // GET EMPLOYEES ONLY
-// ===============================
-
 export const getEmployees = async () => {
 
     return User.find({
@@ -53,9 +44,7 @@ export const getEmployees = async () => {
 
 
 
-// ===============================
 // DEACTIVATE USER (Never hard delete)
-// ===============================
 
 export const deactivateUser = async (id) => {
 

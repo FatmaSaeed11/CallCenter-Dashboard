@@ -19,7 +19,8 @@
   },
   "homepage": "https://github.com/FatmaSaeed11/CallCenter-Dashboard#readme",
   "dependencies": {
-    "bull": "^4.16.5"
+    "bull": "^4.16.5",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "vite": "^7.3.1"

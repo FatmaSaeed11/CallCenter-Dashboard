@@ -1,15 +1,12 @@
 import mongoose from "mongoose";
 import Order from "./order.model.js";
-import * as CustomerService from "../customers/customer.service.js";
+import {ensureCustomer} from "../customers/customer.service.js";
 import { createCommission } from "../commissions/commission.service.js";
 import { ROLES } from "../../common/constants/roles.js";
 import { findBySku } from "../products/product.service.js";
 
 
-
-// =======================================
 // CREATE ORDER — ENTERPRISE SAFE
-// =======================================
 
 export const createOrder = async (payload, agentId) => {
 
@@ -21,22 +18,22 @@ export const createOrder = async (payload, agentId) => {
 
         const { sku, quantity, customer } = payload;
 
-        // ✅ Strong validation
+        //  Strong validation
         if (!sku || !quantity || quantity <= 0) {
             throw new Error("Valid SKU and quantity required");
         }
 
-        // ✅ CLEAN ARCHITECTURE — use product service
+        // CLEAN ARCHITECTURE — use product service
         const product = await findBySku(sku, session);
 
 
-        // ✅ Ensure customer INSIDE transaction
+        //  Ensure customer INSIDE transaction
         const syncedCustomer =
-            await CustomerService.ensureCustomer(customer, session);
+            await ensureCustomer(customer, session);
 
         const totalAmount = product.price * quantity;
 
-        // ✅ Create order
+        //  Create order
         const [order] = await Order.create([{
             agent: agentId,
             customer: syncedCustomer._id,
@@ -52,7 +49,7 @@ export const createOrder = async (payload, agentId) => {
         }], { session });
 
 
-        // ✅ Commission INSIDE transaction
+        //  Commission INSIDE transaction
         await createCommission({
             employeeId: agentId,
             orderId: order._id,
@@ -61,10 +58,10 @@ export const createOrder = async (payload, agentId) => {
         }, session);
 
 
-        // ✅ Commit FIRST
+        //  Commit FIRST
         await session.commitTransaction();
 
-        // 🔥 NEVER run integrations inside transaction
+        //  NEVER run integrations inside transaction
         await integrationWorker.addIntegrationJob(order);
 
         return order;
@@ -81,10 +78,7 @@ export const createOrder = async (payload, agentId) => {
 };
 
 
-
-// =======================================
 // GET ORDERS
-// =======================================
 
 export const getOrders = async (user, agentFilter) => {
 
@@ -104,14 +98,12 @@ export const getOrders = async (user, agentFilter) => {
         .populate("agent", "name")
         .populate("customer", "name phone")
         .sort({ createdAt: -1 })
-        .lean(); // 🔥 big performance boost
+        .lean(); // big performance boost
 };
 
 
 
-// =======================================
 // ENTERPRISE DASHBOARD
-// =======================================
 
 export const getDashboardStats = async () => {
 
