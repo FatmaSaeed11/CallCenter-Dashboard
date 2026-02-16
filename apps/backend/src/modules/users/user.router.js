@@ -3,7 +3,7 @@ import {createUser,getUsers,getEmployees,deactivateUser} from "./user.controller
 
 import { protect } from "../../middleware/auth.middleware.js";
 import { authorize } from "../../middleware/role.middleware.js";
-import { validate } from "../../common/middleware/validate.js";
+import { validate } from "../../middleware/validate.js";
 import { ROLES } from "../../common/constants/roles.js";
 
 import {

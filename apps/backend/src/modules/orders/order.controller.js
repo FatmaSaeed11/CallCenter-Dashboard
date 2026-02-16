@@ -16,7 +16,7 @@ export const createOrder = asyncHandler(async (req, res) => {
   });
 
   const order = await Order.create({
-    agent: req.userId,
+    agent: req.user.id,
     customer: customerId,
     items: [
       {
@@ -39,7 +39,7 @@ export const createOrder = asyncHandler(async (req, res) => {
   });
 });
 
-export const getOrders = asyncHandler(async (req, res) => {
+export const listOrders = asyncHandler(async (req, res) => {
 
   const orders = await getOrders(
     req.user,

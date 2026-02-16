@@ -1,6 +1,7 @@
 import Customer from "./customer.model.js";
-import { createOdooCustomer } from "../../integrations/odoo/odoo.service.js";
+import { createShopifyCustomer } from "../../integrations/shopify/shopify.service.js";
 import { normalizePhone } from "../../common/utils/normalizePhone.js";
+import { ApiError } from "../../common/errors/ApiError.js";
 
 
 //Find customer by phone
@@ -11,10 +12,8 @@ export const findCustomerByPhone = async (phone) => {
 
   return Customer.findOne({
     phone: normalizedPhone
-  });
+  }).lean();
 };
-
-
 
 /*
   ENTERPRISE — Transaction Safe
@@ -23,7 +22,7 @@ export const findCustomerByPhone = async (phone) => {
 export const ensureCustomer = async (data, session) => {
 
   if (!data.phone) {
-    throw new Error("Customer phone is required");
+    throw new ApiError(400, "Customer phone is required");
   }
 
   // Normalize FIRST
@@ -35,17 +34,17 @@ export const ensureCustomer = async (data, session) => {
 
   if (customer) return customer;
 
-  // Try Odoo (BUT do not block DB transaction)
-  let odooId = null;
+  // Try Shopify (BUT do not block DB transaction)
+  let shopifyId = null;
 
   try {
-    const odooCustomer = await createOdooCustomer(data);
-    odooId = odooCustomer?.id || null;
+    const shopifyCustomer = await createShopifyCustomer(data);
+    shopifyId = shopifyCustomer?.id || null;
   } catch (err) {
 
-    console.error("Odoo customer creation failed:", err.message);
+    console.error("Shopify customer creation failed:", err.message);
 
-    /**
+    /*
       Enterprise behavior:
       NEVER fail financial transaction because of ERP downtime
      */
@@ -53,7 +52,7 @@ export const ensureCustomer = async (data, session) => {
 
   const [newCustomer] = await Customer.create([{
     ...data,
-    odooId
+    shopifyId
   }], { session });
 
   return newCustomer;
@@ -64,10 +63,10 @@ export const ensureCustomer = async (data, session) => {
 
 //Standalone creation (Admin / imports)
  
-export const createCustomer = async (data) => {
+export const createCustomer  = async (data) => {
 
   if (!data.phone) {
-    throw new Error("Customer phone is required");
+    throw new ApiError(400, "Customer phone is required");
   }
 
   // Normalize BEFORE lookup
@@ -79,28 +78,28 @@ export const createCustomer = async (data) => {
 
   if (existing) return existing;
 
-  let odooId = null;
+  let shopifyId = null;
 
   try {
-    const odooCustomer = await createOdooCustomer(data);
-    odooId = odooCustomer?.id || null;
+    const shopifyCustomer = await createShopifyCustomer(data);
+    shopifyId = shopifyCustomer?.id || null;
   } catch (err) {
 
-    console.error("Odoo error:", err.message);
+    console.error("Shopify error:", err.message);
 
     // Never block revenue
   }
 
   return Customer.create({
     ...data,
-    odooId
+    shopifyId
   });
 };
 
 
 
  // Get all customers
-export const getCustomers = async () => {
+export const getCustomers  = async () => {
   return Customer.find()
     .sort({ createdAt: -1 })
     .lean(); // performance

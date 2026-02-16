@@ -1,38 +1,16 @@
-import {createProduct,getProducts,updateProduct,deactivateProduct} from "./product.service.js";
+import {createProduct as createProductService,getProducts as getProductsService ,updateProduct,deactivateProduct} from "./product.service.js";
 import { createProductSchema } from "./product.validatior.js";
 
 
 // CREATE
-export const createProduct = async (req, res) => {
-  try {
+export const createProductController = async (req, res) => {
+  const product = await createProductService(req.body);
 
-    const { error, value } =
-      createProductSchema.validate(req.body);
-
-    if (error) {
-      return res.status(400).json({
-        success: false,
-        message: error.message
-      });
-    }
-
-    const product =
-      await createProduct(value);
-
-    res.status(201).json({
-      success: true,
-      data: product
-    });
-
-  } catch (err) {
-
-    res.status(500).json({
-      success: false,
-      message: err.message
-    });
-  }
+  res.status(201).json({
+    success: true,
+    data: product
+  });
 };
-
 
 
 // GET
@@ -40,7 +18,7 @@ export const getProducts = async (req, res) => {
   try {
 
     const products =
-      await getProducts();
+      await getProductsService();
 
     res.json({
       success: true,

@@ -1,5 +1,5 @@
 import express from "express";
-import {createCustomer,getCustomers,getCustomerByPhone} from "./customer.controller.js";
+import {createCustomerController,getAllCustomersController,getCustomerByPhoneController} from "./customer.controller.js";
 
 import { protect } from "../../middleware/auth.middleware.js";
 import { authorize } from "../../middleware/role.middleware.js";
@@ -16,7 +16,7 @@ router.use(protect);
 router.post(
   "/",
   authorize(ROLES.ADMIN),
-  createCustomer
+  createCustomerController
 );
 
 
@@ -25,7 +25,7 @@ router.post(
 router.get(
   "/",
   authorize(ROLES.ADMIN),
-  getCustomers
+  getAllCustomersController
 );
 
 
@@ -33,5 +33,5 @@ router.get(
 router.get(
   "/:phone",
   authorize(ROLES.ADMIN, ROLES.EMPLOYEE),
-  getCustomerByPhone
+  getCustomerByPhoneController
 );

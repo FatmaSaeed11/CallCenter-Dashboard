@@ -1,7 +1,7 @@
 import express from "express";
 import { protect } from "../../middleware/auth.middleware.js";
 import { authorize } from "../../middleware/role.middleware.js";
-import { createOrder, getOrders, dashboard } from "./order.controller.js";
+import { createOrder, getOrders, dashboard, listOrders } from "./order.controller.js";
 
 import { ROLES } from "../../common/constants/roles.js"; 
 
@@ -20,7 +20,7 @@ router.post(
 router.get(
   "/",
   authorize(ROLES.ADMIN),
-  getOrders
+  listOrders
 );
 
 router.get(

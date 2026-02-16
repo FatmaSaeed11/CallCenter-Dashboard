@@ -31,7 +31,7 @@ app.use(helmet());
 app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 app.use(express.json({ limit: "10kb" }));
 app.use("/webhooks/shopify", express.raw({ type: "application/json" }));
-app.use("/webhooks/shopify", shopifyRoutes);
+app.use("/webhooks/shopify", shopifyRouter);
 app.use(express.json());
 
 /* HEALTH CHECK */

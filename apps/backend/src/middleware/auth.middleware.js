@@ -6,7 +6,7 @@ import User from "../modules/users/user.model.js";
 export const protect = asyncHandler(async (req, res, next) => {
   let token;
 
-  // ✅ Extract token
+  // Extract token
   if (req.headers.authorization?.startsWith("Bearer")) {
     token = req.headers.authorization.split(" ")[1];
   }
@@ -15,7 +15,7 @@ export const protect = asyncHandler(async (req, res, next) => {
     throw new ApiError(401, "Not authorized, token missing");
   }
 
-  // ✅ Verify token
+  // Verify token
   let decoded;
   try {
     decoded = verifyAccessToken(token);
@@ -23,18 +23,20 @@ export const protect = asyncHandler(async (req, res, next) => {
     throw new ApiError(401, "Invalid or expired token");
   }
 
-  // ✅ Fetch user
+  // Fetch user
   const user = await User.findById(decoded.id)
     .select("-password")
-    .lean(); // 🔥 performance boost
+    .lean(); // performance boost
 
   if (!user) {
     throw new ApiError(401, "User no longer exists");
   }
 
-  // ⭐ VERY IMPORTANT — for multi-tenant later
-  req.user = user;
-  req.userId = user._id;
-
+  // VERY IMPORTANT — for multi-tenant later
+  req.user = {
+  id: user._id,
+  role: user.role,
+  tenant: user.tenant, //future multi-tenant support
+};
   next();
 });

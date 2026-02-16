@@ -22,7 +22,10 @@ const customerSchema = new mongoose.Schema(
       type: Number,
       index: true
     },
-
+    shopifyId: {
+    type: String,
+    index: true
+   },
     notes: String
   },
   { timestamps: true }

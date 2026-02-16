@@ -1,6 +1,7 @@
 import asyncHandler from "../../common/helpers/asyncHandler.js";
 import { ApiError } from "../../common/errors/ApiError.js";
-import {createCustomer,getCustomers,findCustomerByPhone} from "./customer.service.js";
+import {  createCustomer,
+getCustomers as getCustomersService ,findCustomerByPhone} from "./customer.service.js";
 
 
 
@@ -8,7 +9,7 @@ import {createCustomer,getCustomers,findCustomerByPhone} from "./customer.servic
   POST /customers
  Admin only usually
  */
-export const createCustomer = asyncHandler(async (req, res) => {
+export const createCustomerController= asyncHandler(async (req, res) => {
 
   const customer = await createCustomer(req.body);
 
@@ -21,9 +22,9 @@ export const createCustomer = asyncHandler(async (req, res) => {
 
  //GET /customers
  
-export const getCustomers = asyncHandler(async (req, res) => {
+export const getAllCustomersController = asyncHandler(async (req, res) => {
 
-  const customers = await getCustomers();
+  const customers = await getCustomersService();
 
   res.json({
     success: true,
@@ -32,12 +33,11 @@ export const getCustomers = asyncHandler(async (req, res) => {
 });
 
 
-
-/**
- * GET /customers/:phone
- * Used heavily by agents during order creation
+/*
+ GET /customers/:phone
+ Used heavily by agents during order creation
  */
-export const getCustomerByPhone = asyncHandler(async (req, res) => {
+export const getCustomerByPhoneController  = asyncHandler(async (req, res) => {
 
   const customer = await findCustomerByPhone(req.params.phone);
 
