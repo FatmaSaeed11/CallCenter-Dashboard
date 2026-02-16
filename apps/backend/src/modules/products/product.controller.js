@@ -1,9 +1,9 @@
-import {createProduct as createProductService,getProducts as getProductsService ,updateProduct,deactivateProduct} from "./product.service.js";
+import {createProduct as createProductService,getProducts as getProductsService ,updateProduct as updateProductService,deactivateProduct as deactivateProductService} from "./product.service.js";
 import { createProductSchema } from "./product.validatior.js";
 
 
 // CREATE
-export const createProductController = async (req, res) => {
+export const createProduct = async (req, res) => {
   const product = await createProductService(req.body);
 
   res.status(201).json({
@@ -41,7 +41,7 @@ export const updateProduct = async (req, res) => {
   try {
 
     const product =
-      await updateProduct(
+      await updateProductService(
         req.params.id,
         req.body
       );
@@ -67,7 +67,7 @@ export const deactivateProduct = async (req, res) => {
   try {
 
     const product =
-      await deactivateProduct(
+      await deactivateProductService(
         req.params.id
       );
 
