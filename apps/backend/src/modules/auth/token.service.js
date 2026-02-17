@@ -26,3 +26,10 @@ export const verifyAccessToken = (token) =>
 
 export const verifyRefreshToken = (token) =>
   jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+
+if (!process.env.JWT_ACCESS_SECRET) {
+  throw new Error("JWT_ACCESS_SECRET is missing");
+}
+if (!process.env.JWT_REFRESH_SECRET) {
+  throw new Error("JWT_REFRESH_SECRET is missing");
+}

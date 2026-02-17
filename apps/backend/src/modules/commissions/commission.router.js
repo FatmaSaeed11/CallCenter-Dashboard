@@ -5,13 +5,13 @@ import {myCommissions,allCommissions,commissionSummary} from "./commission.contr
 
 import { ROLES } from "../../common/constants/roles.js";
 
-export const router = express.Router();
+export const commissionRouter = express.Router();
 
-router.use(protect);
+commissionRouter.use(protect);
 
 
   // Employee
-router.get(
+commissionRouter.get(
   "/me",
   authorize(ROLES.EMPLOYEE, ROLES.ADMIN),
   myCommissions
@@ -19,13 +19,13 @@ router.get(
 
   // Admin
 
-router.get(
+commissionRouter.get(
   "/",
   authorize(ROLES.ADMIN),
   allCommissions
 );
 
-router.get(
+commissionRouter.get(
   "/summary",
   authorize(ROLES.ADMIN),
   commissionSummary

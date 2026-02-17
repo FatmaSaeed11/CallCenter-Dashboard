@@ -1,9 +1,18 @@
 import {createProduct as createProductService,getProducts as getProductsService ,updateProduct as updateProductService,deactivateProduct as deactivateProductService} from "./product.service.js";
-import { createProductSchema } from "./product.validatior.js";
+import { createProductSchema } from "./product.validator.js";
 
 
 // CREATE
 export const createProduct = async (req, res) => {
+
+  const { error } = createProductSchema.validate(req.body);
+
+  if (error) {
+    return res.status(400).json({
+      success: false,
+      message: error.details[0].message
+    });
+  }
   const product = await createProductService(req.body);
 
   res.status(201).json({

@@ -1,6 +1,39 @@
 import shopify from "./shopify.client.js";
 
 /**
+ * Create Shopify Customer
+ */
+export const createShopifyCustomer = async (customer) => {
+
+  if (!customer?.phone) {
+    throw new Error("Customer phone is required");
+  }
+
+  try {
+
+    const res = await shopify.post("/customers.json", {
+      customer: {
+        first_name: customer.first_name || "Call",
+        last_name: customer.last_name || "Center",
+        phone: customer.phone,
+        email: customer.email
+      }
+    });
+
+    return res.data.customer;
+
+  } catch (err) {
+
+    console.error(
+      "Shopify createCustomer error:",
+      err.response?.data || err.message
+    );
+
+    throw new Error("Failed to create Shopify customer");
+  }
+};
+
+/**
  * Get Product By SKU
  * Used by call center when agent enters SKU
  */

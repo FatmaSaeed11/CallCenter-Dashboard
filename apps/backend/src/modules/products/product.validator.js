@@ -1,6 +1,6 @@
 import Joi from "joi";
 
-export const createProductSchema = Joi.object({
+export const  createProductSchema = Joi.object({
 
   name: Joi.string()
     .min(2)
@@ -22,3 +22,10 @@ export const createProductSchema = Joi.object({
     .min(0)
     .default(0)
 });
+
+export const updateProductSchema = createProductSchema
+  .fork(
+    ["name", "sku", "price", "vendor", "stock"],
+    (field) => field.optional()
+  )
+  .min(1);
