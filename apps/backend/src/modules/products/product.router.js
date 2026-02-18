@@ -3,9 +3,9 @@ import {createProduct,getProducts,updateProduct,deactivateProduct}  from "./prod
 
 // later add authorize(ROLES.ADMIN)
 
-export const router = express.Router();
+export const productRouter = express.Router();
 
-router.post("/", createProduct);
-router.get("/", getProducts);
-router.patch("/:id", updateProduct);
-router.delete("/:id", deactivateProduct);
+productRouter.post("/", createProduct);
+productRouter.get("/", getProducts);
+productRouter.patch("/:id", updateProduct);
+productRouter.delete("/:id", deactivateProduct);

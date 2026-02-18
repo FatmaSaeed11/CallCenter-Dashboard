@@ -11,28 +11,28 @@ import {
     updateUserValidator
 } from "./user.validator.js";
 
-export const router = express.Router();
+export const userRouter = express.Router();
 
 
 //  EVERYTHING below requires login
-router.use(protect);
+userRouter.use(protect);
 
-router.use(authorize(ROLES.ADMIN));
+userRouter.use(authorize(ROLES.ADMIN));
 
 //  ADMIN ONLY
-router.post(
+userRouter.post(
    "/",
    validate(createUserValidator),
    createUser
 );
 
-router.get("/", getUsers);
+userRouter.get("/", getUsers);
 
-router.get("/employees",
+userRouter.get("/employees",
     getEmployees
 );
 
-router.patch("/:id",
+userRouter.patch("/:id",
     validate(updateUserValidator),
     deactivateUser
 );

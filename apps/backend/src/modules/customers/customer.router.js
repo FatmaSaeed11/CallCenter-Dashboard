@@ -5,15 +5,15 @@ import { protect } from "../../middleware/auth.middleware.js";
 import { authorize } from "../../middleware/role.middleware.js";
 import { ROLES } from "../../common/constants/roles.js";
 
-export const router = express.Router();
+export const customerRouter = express.Router();
 
 
 // ALL routes require login
-router.use(protect);
+customerRouter.use(protect);
 
 
  //Admin creates customers manually
-router.post(
+customerRouter.post(
   "/",
   authorize(ROLES.ADMIN),
   createCustomerController
@@ -22,7 +22,7 @@ router.post(
 
 //Admin can list customers
 
-router.get(
+customerRouter.get(
   "/",
   authorize(ROLES.ADMIN),
   getAllCustomersController
@@ -30,7 +30,7 @@ router.get(
 
 
 //Agents NEED this for order flow
-router.get(
+customerRouter.get(
   "/:phone",
   authorize(ROLES.ADMIN, ROLES.EMPLOYEE),
   getCustomerByPhoneController

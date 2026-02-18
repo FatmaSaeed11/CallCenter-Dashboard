@@ -1,29 +1,29 @@
 import express from "express";
 import { protect } from "../../middleware/auth.middleware.js";
 import { authorize } from "../../middleware/role.middleware.js";
-import { createOrder, getOrders, dashboard, listOrders } from "./order.controller.js";
+import { createOrder, dashboard, listOrders } from "./order.controller.js";
 
 import { ROLES } from "../../common/constants/roles.js"; 
 
-export const router = express.Router();
+export const orderRouter = express.Router();
 
-router.use(protect);
+orderRouter.use(protect);
 
 // Employee + Admin
-router.post(
+orderRouter.post(
   "/",
   authorize(ROLES.ADMIN, ROLES.EMPLOYEE),
   createOrder
 );
 
 // Admin only
-router.get(
+orderRouter.get(
   "/",
   authorize(ROLES.ADMIN),
   listOrders
 );
 
-router.get(
+orderRouter.get(
   "/dashboard",
   authorize(ROLES.ADMIN),
   dashboard

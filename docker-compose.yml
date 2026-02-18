@@ -26,8 +26,8 @@ services:
     depends_on:
       - mongo
       - redis
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/callcenter
+    env_file:
+      - ./apps/backend/.env
 
 volumes:
   mongo_data:

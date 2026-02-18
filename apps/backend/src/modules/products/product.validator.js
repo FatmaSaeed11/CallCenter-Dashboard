@@ -1,5 +1,11 @@
 import Joi from "joi";
 
+export const validateProduct = (data) => {
+  if (!data.name) {
+    throw new Error("Product name required");
+  }
+};
+
 export const createProductSchema = Joi.object({
 
   name: Joi.string()
@@ -22,3 +28,10 @@ export const createProductSchema = Joi.object({
     .min(0)
     .default(0)
 });
+
+export const updateProductSchema = createProductSchema
+  .fork(
+    ["name", "sku", "price", "vendor", "stock"],
+    (field) => field.optional()
+  )
+  .min(1);
