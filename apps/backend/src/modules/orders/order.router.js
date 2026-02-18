@@ -1,7 +1,7 @@
 import express from "express";
 import { protect } from "../../middleware/auth.middleware.js";
 import { authorize } from "../../middleware/role.middleware.js";
-import { createOrder, listOrders, dashboard } from "./order.controller.js";
+import { createOrder, dashboard, listOrders } from "./order.controller.js";
 
 import { ROLES } from "../../common/constants/roles.js"; 
 
