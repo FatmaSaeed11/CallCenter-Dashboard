@@ -6,7 +6,7 @@ export const validateProduct = (data) => {
   }
 };
 
-export const createProductSchema = Joi.object({
+export const  createProductSchema = Joi.object({
 
   name: Joi.string()
     .min(2)
@@ -34,4 +34,5 @@ export const updateProductSchema = createProductSchema
     ["name", "sku", "price", "vendor", "stock"],
     (field) => field.optional()
   )
+
   .min(1);
