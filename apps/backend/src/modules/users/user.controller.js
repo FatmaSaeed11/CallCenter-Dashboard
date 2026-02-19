@@ -3,6 +3,8 @@ import {
   createUser as createUserService,
   getUsers as getUsersService,
   getEmployees as getEmployeesService,
+  getUserById as getUserByIdService,
+  updateUser as updateUserService,
   deactivateUser as deactivateUserService
 } from "./user.service.js";
 
@@ -33,9 +35,27 @@ export const getEmployees = asyncHandler(async (req, res) => {
         });
 });
 
+// GET BY ID
+export const getUserById = asyncHandler(async (req, res) => {
+    const user = await getUserByIdService(req.params.id);
+    res.json({
+        success: true,
+        data: user
+    });
+});
+
 // DEACTIVATE
 export const deactivateUser = asyncHandler(async (req, res) => {
     const user = await deactivateUserService(req.params.id);
+    res.json({
+        success: true,
+        data: user
+    });
+});
+
+// UPDATE
+export const updateUser = asyncHandler(async (req, res) => {
+    const user = await updateUserService(req.params.id, req.body);
     res.json({
         success: true,
         data: user

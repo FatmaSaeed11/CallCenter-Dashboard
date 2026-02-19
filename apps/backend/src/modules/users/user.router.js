@@ -1,10 +1,8 @@
 import express from "express";
-import {createUser,getUsers,getEmployees,deactivateUser} from "./user.controller.js";
+import {createUser,getUsers,getEmployees,getUserById,updateUser,deactivateUser} from "./user.controller.js";
 
-import { protect } from "../../middleware/auth.middleware.js";
-import { authorize } from "../../middleware/role.middleware.js";
+import { protect, adminGuard } from "../../middleware/auth.middleware.js";
 import { validate } from "../../middleware/validate.js";
-import { ROLES } from "../../common/constants/roles.js";
 
 import {
     createUserValidator,
@@ -17,7 +15,7 @@ export const userRouter = express.Router();
 //  EVERYTHING below requires login
 userRouter.use(protect);
 
-userRouter.use(authorize(ROLES.ADMIN));
+userRouter.use(adminGuard);
 
 //  ADMIN ONLY
 userRouter.post(
@@ -32,8 +30,16 @@ userRouter.get("/employees",
     getEmployees
 );
 
-userRouter.patch("/:id",
+userRouter.get("/:id",
+    getUserById
+);
+
+userRouter.put("/:id",
     validate(updateUserValidator),
+    updateUser
+);
+
+userRouter.delete("/:id",
     deactivateUser
 );
 

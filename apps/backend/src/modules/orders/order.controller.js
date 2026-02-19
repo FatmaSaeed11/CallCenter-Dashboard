@@ -1,4 +1,4 @@
-import {getOrders,getDashboardStats} from "./order.service.js";
+import {getOrders,getDashboardStats,updateOrderStatus as updateOrderStatusService} from "./order.service.js";
 import {getProductBySKU,createShopifyOrder} from "../../integrations/shopify/shopify.service.js";
 import Order from "./order.model.js";
 import asyncHandler from "../../common/helpers/asyncHandler.js";
@@ -52,6 +52,17 @@ export const listOrders = asyncHandler(async (req, res) => {
   });
 });
 
+export const myOrders = asyncHandler(async (req, res) => {
+  const orders = await getOrders(
+    { id: req.user.id, role: req.user.role }
+  );
+
+  res.json({
+    success: true,
+    data: orders
+  });
+});
+
 export const dashboard = asyncHandler(async (req, res) => {
 
   const stats = await getDashboardStats();
@@ -59,5 +70,14 @@ export const dashboard = asyncHandler(async (req, res) => {
   res.json({
     success: true,
     data: stats
+  });
+});
+
+export const updateOrderStatus = asyncHandler(async (req, res) => {
+  const order = await updateOrderStatusService(req.params.id, req.body.status);
+
+  res.json({
+    success: true,
+    data: order
   });
 });

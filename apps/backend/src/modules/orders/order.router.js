@@ -1,9 +1,8 @@
 import express from "express";
-import { protect } from "../../middleware/auth.middleware.js";
-import { authorize } from "../../middleware/role.middleware.js";
-import { createOrder, dashboard, listOrders } from "./order.controller.js";
-
-import { ROLES } from "../../common/constants/roles.js"; 
+import { protect, adminGuard, roleGuard } from "../../middleware/auth.middleware.js";
+import { validate } from "../../middleware/validate.js";
+import { createOrder, dashboard, listOrders, myOrders, updateOrderStatus } from "./order.controller.js";
+import { updateOrderStatusValidator } from "./order.validator.js";
 
 export const orderRouter = express.Router();
 
@@ -12,19 +11,32 @@ orderRouter.use(protect);
 // Employee + Admin
 orderRouter.post(
   "/",
-  authorize(ROLES.ADMIN, ROLES.EMPLOYEE),
+  roleGuard(["ADMIN", "EMPLOYEE"]),
   createOrder
+);
+
+orderRouter.get(
+  "/my",
+  roleGuard(["EMPLOYEE"]),
+  myOrders
 );
 
 // Admin only
 orderRouter.get(
   "/",
-  authorize(ROLES.ADMIN),
+  adminGuard,
   listOrders
 );
 
 orderRouter.get(
   "/dashboard",
-  authorize(ROLES.ADMIN),
+  adminGuard,
   dashboard
+);
+
+orderRouter.put(
+  "/:id/status",
+  adminGuard,
+  validate(updateOrderStatusValidator),
+  updateOrderStatus
 );
