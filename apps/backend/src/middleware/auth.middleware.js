@@ -6,7 +6,6 @@ import User from "../modules/users/user.model.js";
 export const protect = asyncHandler(async (req, res, next) => {
   let token;
 
-  // Extract token
   if (req.headers.authorization?.startsWith("Bearer")) {
     token = req.headers.authorization.split(" ")[1];
   }
@@ -15,7 +14,6 @@ export const protect = asyncHandler(async (req, res, next) => {
     throw new ApiError(401, "Not authorized, token missing");
   }
 
-  // Verify token
   let decoded;
   try {
     decoded = verifyAccessToken(token);
@@ -23,20 +21,37 @@ export const protect = asyncHandler(async (req, res, next) => {
     throw new ApiError(401, "Invalid or expired token");
   }
 
-  // Fetch user
-  const user = await User.findById(decoded.id)
-    .select("-password")
-    .lean(); // performance boost
+  const user = await User.findById(decoded.id).select("-password").lean();
 
   if (!user) {
     throw new ApiError(401, "User no longer exists");
   }
 
-  // VERY IMPORTANT — for multi-tenant later
   req.user = {
-  id: user._id,
-  role: user.role,
-  tenant: user.tenant, //future multi-tenant support
-};
+    id: user._id,
+    role: user.role,
+    tenant: user.tenant,
+  };
+
   next();
 });
+
+export const roleGuard = (allowedRoles = []) => {
+  return (req, res, next) => {
+    if (!req.user) {
+      throw new ApiError(401, "Not authenticated");
+    }
+
+    if (!allowedRoles.includes(req.user.role)) {
+      throw new ApiError(
+        403,
+        `Role '${req.user.role}' is not allowed to access this resource`
+      );
+    }
+
+    next();
+  };
+};
+
+export const adminGuard = roleGuard(["ADMIN"]);
+export const employeeGuard = roleGuard(["EMPLOYEE"]);

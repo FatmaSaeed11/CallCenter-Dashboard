@@ -4,6 +4,7 @@ import {ensureCustomer} from "../customers/customer.service.js";
 import { createCommission } from "../commissions/commission.service.js";
 import { ROLES } from "../../common/constants/roles.js";
 import { findBySku } from "../products/product.service.js";
+import { ApiError } from "../../common/errors/ApiError.js";
 
 
 // CREATE ORDER — ENTERPRISE SAFE
@@ -86,7 +87,7 @@ export const getOrders = async (user, agentFilter) => {
 
     // Employee sees ONLY their orders
     if (user.role === ROLES.EMPLOYEE) {
-        filter.agent = user._id;
+        filter.agent = user.id || user._id;
     }
 
     // Admin filtering
@@ -123,4 +124,27 @@ export const getDashboardStats = async () => {
         totalOrders: 0,
         avgOrderValue: 0
     };
+};
+
+export const updateOrderStatus = async (orderId, status) => {
+    const allowedStatuses = Order.schema.path("status").enumValues;
+
+    if (!allowedStatuses.includes(status)) {
+        throw new ApiError(400, "Invalid order status");
+    }
+
+    const order = await Order.findByIdAndUpdate(
+        orderId,
+        { status },
+        { new: true, runValidators: true }
+    )
+        .populate("agent", "name")
+        .populate("customer", "name phone")
+        .lean();
+
+    if (!order) {
+        throw new ApiError(404, "Order not found");
+    }
+
+    return order;
 };

@@ -16,23 +16,23 @@ export const registerUser = async (data) => {
     throw new ApiError(400, "Email already exists");
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
-
   const user = await User.create({
     email,
     name,
-    password: hashedPassword,
-    role: role || "employee",
+    password,
+    role: role || "EMPLOYEE",
   });
 
   const accessToken = generateAccessToken(user);
   const refreshToken = generateRefreshToken(user);
 
-  return { user, accessToken, refreshToken };
+  const { password: _password, ...safeUser } = user.toObject();
+
+  return { user: safeUser, accessToken, refreshToken };
 };
 
 export const loginUser = async (email, password) => {
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).select("+password");
 
   if (!user) {
     throw new ApiError(401, "Invalid credentials");
@@ -47,5 +47,7 @@ export const loginUser = async (email, password) => {
   const accessToken = generateAccessToken(user);
   const refreshToken = generateRefreshToken(user);
 
-  return { user, accessToken, refreshToken };
+  const { password: _password, ...safeUser } = user.toObject();
+
+  return { user: safeUser, accessToken, refreshToken };
 };

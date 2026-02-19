@@ -40,8 +40,8 @@ const orderSchema = new mongoose.Schema({
 
     status: {
         type: String,
-        enum: ["pending", "completed", "cancelled"],
-        default: "completed",
+        enum: ["NEW","CONFIRMED","SHIPPED","DELIVERED","CANCELLED","RETURNED"],
+        default: "NEW",
         index: true
     },
 
@@ -56,7 +56,16 @@ const orderSchema = new mongoose.Schema({
             type: String,
             index: true
         }
-    }
+    },
+    commissionAmount: {
+        type: Number,
+        default: 0
+   },
+
+    commissionCalculated: {
+        type: Boolean,
+        default: false
+   },
 
 }, { timestamps: true });
 

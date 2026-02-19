@@ -1,9 +1,7 @@
 import express from "express";
 import {createCustomerController,getAllCustomersController,getCustomerByPhoneController} from "./customer.controller.js";
 
-import { protect } from "../../middleware/auth.middleware.js";
-import { authorize } from "../../middleware/role.middleware.js";
-import { ROLES } from "../../common/constants/roles.js";
+import { protect, adminGuard, roleGuard } from "../../middleware/auth.middleware.js";
 
 export const customerRouter = express.Router();
 
@@ -15,7 +13,7 @@ customerRouter.use(protect);
  //Admin creates customers manually
 customerRouter.post(
   "/",
-  authorize(ROLES.ADMIN),
+  adminGuard,
   createCustomerController
 );
 
@@ -24,7 +22,7 @@ customerRouter.post(
 
 customerRouter.get(
   "/",
-  authorize(ROLES.ADMIN),
+  adminGuard,
   getAllCustomersController
 );
 
@@ -32,6 +30,6 @@ customerRouter.get(
 //Agents NEED this for order flow
 customerRouter.get(
   "/:phone",
-  authorize(ROLES.ADMIN, ROLES.EMPLOYEE),
+  roleGuard(["ADMIN", "EMPLOYEE"]),
   getCustomerByPhoneController
 );

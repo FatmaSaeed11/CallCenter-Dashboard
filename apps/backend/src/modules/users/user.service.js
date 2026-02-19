@@ -42,6 +42,17 @@ export const getEmployees = async () => {
     .lean();
 };
 
+// GET USER BY ID
+export const getUserById = async (id) => {
+    const user = await User.findById(id).select("-password").lean();
+
+    if (!user) {
+        throw new Error("User not found");
+    }
+
+    return user;
+};
+
 
 
 // DEACTIVATE USER (Never hard delete)
@@ -53,4 +64,35 @@ export const deactivateUser = async (id) => {
         { isActive: false },
         { new: true }
     );
+};
+
+// UPDATE USER
+export const updateUser = async (id, data) => {
+    const user = await User.findById(id);
+
+    if (!user) {
+        throw new Error("User not found");
+    }
+
+    if (data.email) {
+        const normalizedEmail = data.email.toLowerCase();
+        const existing = await User.findOne({
+            email: normalizedEmail,
+            _id: { $ne: id }
+        });
+
+        if (existing) {
+            throw new Error("Email already in use");
+        }
+
+        user.email = normalizedEmail;
+    }
+
+    if (data.name !== undefined) user.name = data.name;
+    if (data.role !== undefined) user.role = data.role;
+    if (data.password !== undefined) user.password = data.password;
+
+    await user.save();
+
+    return User.findById(user._id).select("-password").lean();
 };
